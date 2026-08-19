@@ -1,35 +1,38 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Cormorant_Garamond } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CartModal from "@/components/CartModal";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "ArtAfrique — Découvrez l'art africain",
+  title: "N'KORA — L'art africain, autrement",
   description:
-    "Plateforme de découverte et de vitrine pour les artistes africains : peinture, sculpture, photographie et artisanat.",
+    "Plateforme dédiée aux arts africains contemporains et traditionnels, galeries virtuelles, expositions immersives 3D et ateliers d'artistes.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col bg-[#F6F2E7] text-[#2F241A]">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <CartModal />
       </body>
     </html>
   );

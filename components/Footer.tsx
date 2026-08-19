@@ -1,14 +1,103 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import Logo from "@/components/Logo";
+
+const NAV_LINKS = [
+  { href: "/", label: "Accueil" },
+  { href: "/catalogue", label: "Catalogue" },
+  { href: "/artistes", label: "Artistes" },
+  { href: "/expositions", label: "Expositions" },
+  { href: "/a-propos", label: "À propos" },
+];
+
 export default function Footer() {
   return (
-    <footer className="border-t border-black/5 bg-white/50">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-sm text-foreground/60">
-            © {new Date().getFullYear()} ArtAfrique — Découvrez l'art africain
-          </p>
-          <p className="text-sm text-foreground/60">
-            Fait avec ❤️ sur le continent
-          </p>
+    <footer className="bg-[#241710] text-[#F6F2E7] pt-16 pb-8 border-t border-[#3E2519]" id="footer-section">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12">
+          {/* Brand & Mission Column */}
+          <div className="md:col-span-5 space-y-5">
+            <Link href="/" className="cursor-pointer inline-block">
+              <Logo variant="light-on-dark" size="md" />
+            </Link>
+
+            <p className="text-xs sm:text-sm text-[#E8D6B1]/75 leading-relaxed max-w-sm">
+              La première plateforme dédiée à l'art africain authentique. Connectez-vous directement avec des artistes d'exception et acquérez des créations d'héritage.
+            </p>
+
+            {/* Social Icons */}
+            <div className="flex items-center gap-3 pt-2">
+              {[
+                { label: "f", href: "#" },
+                { label: "in", href: "#" },
+                { label: "ig", href: "#" },
+                { label: "tw", href: "#" },
+              ].map((soc) => (
+                <a
+                  key={soc.label}
+                  href={soc.href}
+                  className="w-8 h-8 rounded-full bg-[#3E2519] hover:bg-[#C4953A] hover:text-[#241710] text-[#E8D6B1] flex items-center justify-center font-bold text-xs transition-all shadow-xs"
+                >
+                  {soc.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation Links Column */}
+          <div className="md:col-span-3 space-y-4">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#D6B26A] block">
+              NAVIGATION
+            </span>
+            <ul className="space-y-2.5 text-xs text-[#E8D6B1]/80">
+              {NAV_LINKS.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="hover:text-[#D6B26A] transition-colors cursor-pointer">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact & Artist Action Column */}
+          <div className="md:col-span-4 space-y-4">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#D6B26A] block">
+              CONTACT
+            </span>
+            <div className="space-y-1.5 text-xs text-[#E8D6B1]/80">
+              <p>contact@nkora.art</p>
+              <p>+221 77 000 00 00</p>
+              <p>Dakar, Sénégal & Abidjan, Côte d'Ivoire</p>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                href="/inscription"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#3E2519] hover:bg-[#C4953A] text-[#E8D6B1] hover:text-[#241710] text-xs font-bold transition-all shadow-md cursor-pointer"
+              >
+                <span>Atelier Artiste</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Copyright & Legal Bar */}
+        <div className="pt-8 border-t border-[#3E2519]/70 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#E8D6B1]/60">
+          <div className="flex items-center gap-3">
+            <Logo variant="symbol" size="sm" />
+            <span>© 2026 N'KORA — L'art africain, autrement.</span>
+          </div>
+
+          <div className="flex items-center gap-6 text-[11px]">
+            <a href="#" className="hover:text-[#D6B26A] transition-colors">Confidentialité</a>
+            <a href="#" className="hover:text-[#D6B26A] transition-colors">Conditions</a>
+            <a href="#" className="hover:text-[#D6B26A] transition-colors">Cookies</a>
+          </div>
         </div>
       </div>
     </footer>

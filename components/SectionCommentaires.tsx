@@ -77,10 +77,10 @@ export default function SectionCommentaires({
             <div key={commentaire.id} className="rounded-xl bg-white p-4">
               <div className="mb-1 flex items-center gap-2">
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary uppercase">
-                  {commentaire.auteur?.nom_complet?.charAt(0) || "?"}
+                  {commentaire.auteur?.first_name?.charAt(0) || "?"}
                 </span>
                 <span className="text-sm font-medium">
-                  {commentaire.auteur?.nom_complet || "Utilisateur"}
+                  {commentaire.auteur?.first_name || "Utilisateur"}
                 </span>
                 <span className="text-xs text-foreground/40">
                   {new Date(commentaire.created_at).toLocaleDateString("fr-FR", {
@@ -90,7 +90,7 @@ export default function SectionCommentaires({
                   })}
                 </span>
               </div>
-              <p className="text-sm text-foreground/80">{commentaire.contenu}</p>
+              <p className="text-sm text-foreground/80">{commentaire.content}</p>
             </div>
           ))}
         </div>

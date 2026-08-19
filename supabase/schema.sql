@@ -1,6 +1,7 @@
 -- ============================================
 -- ART-AFRIQUE : Schéma de base de données
 -- À exécuter dans Supabase → SQL Editor
+-- Idempotent : ré-exécutable sans erreur
 -- ============================================
 
 -- 1. Table des profils artistes
@@ -72,6 +73,29 @@ alter table public.oeuvres enable row level security;
 alter table public.commentaires enable row level security;
 alter table public.coups_de_coeur enable row level security;
 alter table public.abonnements enable row level security;
+
+-- Supprimer les politiques existantes pour rendre le script ré-exécutable
+drop policy if exists "Profils visibles par tous" on public.profils;
+drop policy if exists "Chacun peut créer son profil" on public.profils;
+drop policy if exists "Chacun peut modifier son profil" on public.profils;
+
+drop policy if exists "Œuvres visibles par tous" on public.oeuvres;
+drop policy if exists "Un artiste peut ajouter ses œuvres" on public.oeuvres;
+drop policy if exists "Un artiste peut modifier ses œuvres" on public.oeuvres;
+drop policy if exists "Un artiste peut supprimer ses œuvres" on public.oeuvres;
+
+drop policy if exists "Commentaires visibles par tous" on public.commentaires;
+drop policy if exists "Un utilisateur connecté peut commenter" on public.commentaires;
+drop policy if exists "Un auteur peut modifier son commentaire" on public.commentaires;
+drop policy if exists "Un auteur peut supprimer son commentaire" on public.commentaires;
+
+drop policy if exists "Coups de cœur visibles par tous" on public.coups_de_coeur;
+drop policy if exists "Un utilisateur connecté peut liker" on public.coups_de_coeur;
+drop policy if exists "Un utilisateur peut retirer son like" on public.coups_de_coeur;
+
+drop policy if exists "Abonnements visibles par tous" on public.abonnements;
+drop policy if exists "Un utilisateur connecté peut s'abonner" on public.abonnements;
+drop policy if exists "Un utilisateur peut se désabonner" on public.abonnements;
 
 -- PROFILS : tout le monde peut lire, seul l'utilisateur peut modifier son profil
 create policy "Profils visibles par tous"
@@ -159,6 +183,12 @@ on conflict (id) do nothing;
 insert into storage.buckets (id, name, public)
 values ('oeuvres', 'oeuvres', true)
 on conflict (id) do nothing;
+
+-- Supprimer les policies de stockage existantes
+drop policy if exists "Avatars publics" on storage.objects;
+drop policy if exists "Œuvres publiques" on storage.objects;
+drop policy if exists "Upload avatar" on storage.objects;
+drop policy if exists "Upload œuvre" on storage.objects;
 
 -- Politiques de stockage : tout le monde peut lire
 create policy "Avatars publics"

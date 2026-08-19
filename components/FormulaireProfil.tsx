@@ -9,6 +9,7 @@ interface Props {
   bio: string | null;
   pays: string | null;
   photoUrl: string | null;
+  redirectTo?: string;
 }
 
 export default function FormulaireProfil({
@@ -16,6 +17,7 @@ export default function FormulaireProfil({
   bio,
   pays,
   photoUrl,
+  redirectTo = "/tableau-de-bord",
 }: Props) {
   const [preview, setPreview] = useState<string | null>(photoUrl);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +32,8 @@ export default function FormulaireProfil({
 
   return (
     <form action={mettreAJourProfil} className="space-y-4">
+      <input type="hidden" name="redirect_to" value={redirectTo} />
+
       {/* Photo de profil */}
       <div>
         <label className="mb-1.5 block text-sm font-medium text-foreground">

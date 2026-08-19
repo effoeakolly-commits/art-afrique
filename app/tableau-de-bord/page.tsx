@@ -21,36 +21,36 @@ export default async function TableauDeBordPage(props: {
     return null;
   }
 
-  // Récupérer le profil
-  const { data: profil } = await supabase
-    .from("profils")
+  // Récupérer le profil artiste
+  const { data: artiste } = await supabase
+    .from("artists")
     .select("*")
-    .eq("id", user.id)
-    .single();
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const artisteId = artiste?.id || "";
 
   // Récupérer les œuvres de l'artiste
   const { data: oeuvres } = await supabase
-    .from("oeuvres")
+    .from("artworks")
     .select("*")
-    .eq("artiste_id", user.id)
+    .eq("artist_id", artisteId)
     .order("created_at", { ascending: false });
 
   // Compter les abonnés
   const { count: nombreAbonnes } = await supabase
-    .from("abonnements")
+    .from("follows")
     .select("id", { count: "exact", head: true })
-    .eq("artiste_id", user.id);
+    .eq("artist_id", artisteId);
 
   // Compter les coups de cœur totaux sur toutes les œuvres
-  const { data: coupsDeCoeur } = await supabase
-    .from("coups_de_coeur")
-    .select("id", { count: "exact" })
+  const { count: totalLikes } = await supabase
+    .from("artwork_likes")
+    .select("id", { count: "exact", head: true })
     .in(
-      "oeuvre_id",
+      "artwork_id",
       (oeuvres || []).map((o) => o.id)
     );
-
-  const totalLikes = coupsDeCoeur?.length || 0;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -92,7 +92,7 @@ export default async function TableauDeBordPage(props: {
         </div>
         <div className="rounded-2xl border border-black/5 bg-white p-5">
           <p className="text-sm text-foreground/50">Coups de cœur reçus</p>
-          <p className="mt-1 text-3xl font-bold text-primary">{totalLikes}</p>
+          <p className="mt-1 text-3xl font-bold text-primary">{totalLikes || 0}</p>
         </div>
         <div className="rounded-2xl border border-black/5 bg-white p-5">
           <p className="text-sm text-foreground/50">Abonnés</p>
@@ -107,10 +107,10 @@ export default async function TableauDeBordPage(props: {
         <section className="rounded-2xl border border-black/5 bg-white p-6">
           <h2 className="mb-4 text-xl font-semibold">Mon profil artiste</h2>
           <FormulaireProfil
-            nomComplet={profil?.nom_complet || "Artiste"}
-            bio={profil?.bio || null}
-            pays={profil?.pays || null}
-            photoUrl={profil?.photo_url || null}
+            nomComplet={artiste?.display_name || "Artiste"}
+            bio={artiste?.bio || null}
+            pays={artiste?.country || null}
+            photoUrl={artiste?.profile_image_url || null}
           />
 
           <div className="mt-6 border-t border-black/5 pt-6">
@@ -134,19 +134,19 @@ export default async function TableauDeBordPage(props: {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={oeuvre.image_url}
-                    alt={oeuvre.titre}
+                    src={oeuvre.primary_image_url}
+                    alt={oeuvre.title}
                     className="h-20 w-20 rounded-lg object-cover"
                   />
                   <div className="flex-1">
                     <Link
-                      href={`/oeuvres/${oeuvre.id}`}
+                      href={`/oeuvres/${oeuvre.slug}`}
                       className="font-medium hover:text-primary"
                     >
-                      {oeuvre.titre}
+                      {oeuvre.title}
                     </Link>
                     <p className="text-sm capitalize text-foreground/50">
-                      {oeuvre.categorie}
+                      {oeuvre.category}
                     </p>
                   </div>
                   <form action={supprimerOeuvre.bind(null, oeuvre.id)}>
