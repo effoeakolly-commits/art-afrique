@@ -1,6 +1,0 @@
-{
-  "name": "N'KORA",
-  "description": "Plateforme web et galeries virtuelles dédiées aux arts africains contemporains et traditionnels, expositions immersives et ateliers artistes.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

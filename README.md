@@ -1,6 +1,6 @@
-# 🎨 ArtAfrique
+# N'KORA — L'art africain, autrement
 
-Plateforme de découverte et de vitrine pour les artistes africains : peinture, sculpture, photographie et artisanat.
+Plateforme dédiée aux arts africains contemporains et traditionnels : galeries virtuelles, expositions immersives 3D et ateliers d'artistes.
 
 ## ✨ Fonctionnalités
 
@@ -13,6 +13,8 @@ Plateforme de découverte et de vitrine pour les artistes africains : peinture, 
 - **Abonnements** : suivre ses artistes préférés
 - **Tableau de bord** : statistiques (œuvres, coups de cœur, abonnés), gestion du profil et des œuvres
 - **Authentification** : inscription, connexion, déconnexion avec Supabase Auth
+- **Expositions virtuelles** : galeries immersives, rétrospectives
+- **Panier** : acquisition d'œuvres avec séquestre (escrow)
 
 ## 🚀 Démarrage rapide
 
@@ -26,7 +28,7 @@ Plateforme de découverte et de vitrine pour les artistes africains : peinture, 
 ```bash
 # 1. Cloner le projet
 git clone <votre-repo>
-cd art-afrique
+cd nkora
 
 # 2. Installer les dépendances
 npm install
@@ -47,35 +49,34 @@ Ouvrez [http://localhost:3000](http://localhost:3000).
 2. Dans **Project Settings → API**, copiez :
    - `NEXT_PUBLIC_SUPABASE_URL` → l'URL du projet
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY` → la clé anon publique
-3. Dans **SQL Editor**, exécutez le contenu de `supabase/schema.sql` pour créer :
-   - Les tables (`profils`, `oeuvres`, `commentaires`, `coups_de_coeur`, `abonnements`)
+3. Dans **SQL Editor**, exécutez les migrations dans `supabase/migrations/` pour créer :
+   - Les tables (`profiles`, `artists`, `artworks`, `comments`, `artwork_likes`, `follows`, etc.)
    - Les politiques de sécurité (RLS)
-   - Les buckets de stockage (`avatars`, `oeuvres`)
+   - Les buckets de stockage (`avatars`, `artworks`, `banners`)
    - Le trigger de création automatique de profil à l'inscription
 
 ## 🗂️ Structure du projet
 
 ```
-art-afrique/
+nkora/
 ├── app/
 │   ├── artistes/[id]/     → Page profil artiste
 │   ├── connexion/         → Page de connexion
 │   ├── inscription/       → Page d'inscription
-│   ├── oeuvres/[id]/      → Page détail d'une œuvre
+│   ├── oeuvres/[slug]/    → Page détail d'une œuvre
+│   ├── catalogue/         → Catalogue avec filtres
+│   ├── expositions/       → Expositions virtuelles
 │   ├── tableau-de-bord/   → Tableau de bord artiste
 │   ├── layout.tsx         → Layout racine
 │   ├── not-found.tsx      → Page 404 personnalisée
-│   └── page.tsx           → Page d'accueil (découverte)
+│   └── page.tsx           → Page d'accueil
 ├── components/
-│   ├── BoutonLike.tsx     → Bouton coup de cœur (client)
-│   ├── BoutonSuivre.tsx   → Bouton suivre artiste (client)
-│   ├── Filtres.tsx        → Filtres catégorie/pays (client)
+│   ├── public/            → Composants publics (HeroBanner, OeuvreCard, FiltresCatalogue)
+│   ├── Navbar.tsx         → Barre de navigation avec sélecteur de langue et audio Kora
 │   ├── Footer.tsx         → Pied de page
-│   ├── FormulaireOeuvre.tsx → Formulaire d'ajout d'œuvre (client)
-│   ├── FormulaireProfil.tsx → Formulaire de profil avec photo (client)
-│   ├── Navbar.tsx         → Barre de navigation
-│   ├── OeuvreCard.tsx     → Carte d'œuvre (masonry)
-│   └── SectionCommentaires.tsx → Commentaires (client)
+│   ├── CartModal.tsx      → Modale panier
+│   ├── Logo.tsx           → Logo N'KORA (principal et sceau)
+│   └── ...
 ├── lib/
 │   ├── actions.ts         → Server Actions (auth, profil, œuvres, likes, abonnements)
 │   ├── types.ts           → Types TypeScript et constantes
@@ -83,7 +84,7 @@ art-afrique/
 │       ├── client.ts      → Client Supabase navigateur
 │       └── server.ts      → Client Supabase serveur
 ├── supabase/
-│   └── schema.sql         → Schéma complet de la base de données
+│   └── migrations/        → Migrations SQL (schéma, RLS, triggers, données test)
 ├── proxy.ts               → Middleware (protection des routes, session)
 └── package.json
 ```
@@ -94,6 +95,8 @@ art-afrique/
 - **[Supabase](https://supabase.com)** — Backend as a Service (Auth, PostgreSQL, Storage, RLS)
 - **[Tailwind CSS 4](https://tailwindcss.com)** — Styling
 - **[TypeScript](https://www.typescriptlang.org)** — Typage statique
+- **[Zustand](https://zustand-demo.pmnd.rs)** — State management (panier)
+- **[Zod](https://zod.dev)** — Validation
 
 ## 📝 Scripts disponibles
 

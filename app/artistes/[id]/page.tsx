@@ -21,14 +21,14 @@ export async function generateMetadata(props: {
     .maybeSingle();
 
   if (!artiste) {
-    return { title: "Artiste introuvable — ArtAfrique" };
+    return { title: "Artiste introuvable — N'KORA" };
   }
 
   return {
-    title: `${artiste.display_name} — ArtAfrique`,
+    title: `${artiste.display_name} — N'KORA`,
     description:
       artiste.bio?.slice(0, 160) ||
-      `Découvrez les œuvres de ${artiste.display_name}${artiste.country ? `, artiste de ${artiste.country}` : ""} sur ArtAfrique.`,
+      `Découvrez les œuvres de ${artiste.display_name}${artiste.country ? `, artiste de ${artiste.country}` : ""} sur N'KORA.`,
   };
 }
 

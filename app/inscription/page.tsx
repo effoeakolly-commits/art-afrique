@@ -14,7 +14,7 @@ export default async function InscriptionPage(props: {
           🎨
         </span>
         <h1 className="text-3xl font-bold tracking-tight">
-          Rejoignez ArtAfrique
+          Rejoignez N'KORA
         </h1>
         <p className="mt-2 text-foreground/60">
           Créez votre profil d'artiste et partagez vos œuvres avec le monde
