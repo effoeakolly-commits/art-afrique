@@ -173,7 +173,7 @@ export interface Commentaire {
   author_id: string;
   content: string;
   created_at: string;
-  auteur?: Profil;
+  auteur?: Partial<Profil>;
 }
 
 export interface ArticlePanier {

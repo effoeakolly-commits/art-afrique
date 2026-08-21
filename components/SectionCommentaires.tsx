@@ -3,7 +3,12 @@
 import { useState, useTransition } from "react";
 import { ajouterCommentaire } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import type { Commentaire } from "@/lib/types";
+import type { Commentaire, Profil } from "@/lib/types";
+
+function getNomComplet(profil?: Partial<Profil>): string | null {
+  if (!profil) return null;
+  return [profil.first_name, profil.last_name].filter(Boolean).join(" ") || null;
+}
 
 interface Props {
   oeuvreId: string;
@@ -77,10 +82,10 @@ export default function SectionCommentaires({
             <div key={commentaire.id} className="rounded-xl bg-white p-4">
               <div className="mb-1 flex items-center gap-2">
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary uppercase">
-                  {commentaire.auteur?.first_name?.charAt(0) || "?"}
+                  {getNomComplet(commentaire.auteur)?.charAt(0) || "?"}
                 </span>
                 <span className="text-sm font-medium">
-                  {commentaire.auteur?.first_name || "Utilisateur"}
+                  {getNomComplet(commentaire.auteur) || "Utilisateur"}
                 </span>
                 <span className="text-xs text-foreground/40">
                   {new Date(commentaire.created_at).toLocaleDateString("fr-FR", {

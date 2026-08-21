@@ -1,29 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { connexion } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function PageConnexion() {
-  const supabase = await createClient();
-
-  const connexion = async (formData: FormData) => {
-    "use server";
-
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    if (!email || !password) return;
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      redirect(`/connexion?erreur=${encodeURIComponent(error.message)}`);
-    }
-
-    redirect("/tableau-de-bord");
-  };
+export default async function PageConnexion(props: {
+  searchParams: Promise<{ erreur?: string; message?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const erreur = searchParams.erreur;
+  const message = searchParams.message;
 
   return (
     <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4 text-[#2F241A]" id="login-page">
@@ -46,20 +32,33 @@ export default async function PageConnexion() {
               </h2>
 
               <div className="rounded-2xl overflow-hidden aspect-4/3 shadow-md bg-black/40 border border-[#3E2519]">
-<Image src="/images/african_master_sculptor_1787142432994.jpg" alt="Atelier d'artiste" width={800} height={600} className="w-full h-full object-cover" />
+                <Image src="/images/african_master_sculptor_1787142432994.jpg" alt="Atelier d'artiste" width={800} height={600} className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
 
           {/* Pied de page */}
           <div className="relative z-10 pt-6 text-[10px] text-[#E8D6B1]/50">
-            N'KORA • Art, Artistes & Culture Africaine
+            {"N'KORA • Art, Artistes & Culture Africaine"}
           </div>
         </div>
 
         {/* Colonne droite : Formulaire */}
         <div className="md:col-span-7 bg-[#FAF7F0] p-8 sm:p-10 flex flex-col justify-center">
           <h2 className="font-serif-title text-2xl sm:text-3xl font-bold text-[#241710]">Se connecter</h2>
+
+          {/* Messages d'erreur / de succès */}
+          {erreur && (
+            <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {erreur === "missing-fields" ? "Veuillez remplir tous les champs." : erreur}
+            </div>
+          )}
+
+          {message === "verifiez-votre-email" && (
+            <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+              Un email de confirmation a été envoyé. Vérifiez votre boîte de réception avant de vous connecter.
+            </div>
+          )}
 
           <form action={connexion} className="space-y-4 mt-6">
             <div>

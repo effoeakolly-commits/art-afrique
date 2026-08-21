@@ -10,7 +10,7 @@ export default async function InscriptionPage(props: {
   return (
     <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md flex-col justify-center px-4 py-12">
       <div className="mb-8 text-center">
-        <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-2xl">
+        <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#A67123] text-2xl">
           🎨
         </span>
         <h1 className="text-3xl font-bold tracking-tight">
@@ -42,7 +42,7 @@ export default async function InscriptionPage(props: {
             type="text"
             required
             placeholder="Ex : Aïcha Konaté"
-            className="w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[#A67123] focus:ring-2 focus:ring-[#A67123]/20"
           />
         </div>
 
@@ -59,7 +59,7 @@ export default async function InscriptionPage(props: {
             type="email"
             required
             placeholder="vous@exemple.com"
-            className="w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[#A67123] focus:ring-2 focus:ring-[#A67123]/20"
           />
         </div>
 
@@ -77,13 +77,13 @@ export default async function InscriptionPage(props: {
             required
             minLength={6}
             placeholder="Au moins 6 caractères"
-            className="w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[#A67123] focus:ring-2 focus:ring-[#A67123]/20"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark"
+          className="w-full rounded-lg bg-[#A67123] px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#8F5F1B] hover:shadow-lg active:scale-[0.98] cursor-pointer"
         >
           Créer mon compte d'artiste
         </button>
@@ -93,7 +93,7 @@ export default async function InscriptionPage(props: {
         Déjà inscrit ?{" "}
         <Link
           href="/connexion"
-          className="font-medium text-primary hover:underline"
+          className="font-medium text-[#A67123] hover:underline"
         >
           Se connecter
         </Link>

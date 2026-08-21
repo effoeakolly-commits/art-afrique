@@ -12,10 +12,9 @@ import type { CategorieArtwork } from "./types";
 export async function inscription(formData: FormData) {
   const supabase = await createClient();
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const nomComplet = formData.get("nom_complet") as string;
-  const role = (formData.get("role") as string) || "artist";
+  const email = (formData.get("email") as string)?.trim();
+  const password = (formData.get("password") as string)?.trim();
+  const nomComplet = (formData.get("nom_complet") as string)?.trim();
 
   if (!email || !password || !nomComplet) {
     redirect("/inscription?erreur=missing-fields");
@@ -24,15 +23,17 @@ export async function inscription(formData: FormData) {
   const [firstName, ...lastNameParts] = nomComplet.trim().split(" ");
   const lastName = lastNameParts.join(" ") || null;
 
-  const { data, error } = await supabase.auth.signUp({
+  // Créer le compte avec signUp - envoie un email de confirmation avec code OTP
+  const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         first_name: firstName,
         last_name: lastName,
-        role,
+        role: "artist",
       },
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/inscription/verification`,
     },
   });
 
@@ -40,12 +41,35 @@ export async function inscription(formData: FormData) {
     redirect(`/inscription?erreur=${encodeURIComponent(error.message)}`);
   }
 
-  if (data.session) {
-    redirect("/tableau-de-bord");
+  // Rediriger vers la page de vérification avec le code OTP
+  redirect(`/inscription/verification?email=${encodeURIComponent(email)}`);
+}
+
+
+export async function verifierCodeOTP(formData: FormData) {
+  const supabase = await createClient();
+
+  const email = (formData.get("email") as string)?.trim();
+  const code = (formData.get("code") as string)?.trim();
+
+  if (!email || !code) {
+    redirect("/inscription/verification?erreur=missing-fields");
   }
 
-  // Si l'email de confirmation est requis
-  redirect("/connexion?message=verifiez-votre-email");
+  // Vérifier le code OTP envoyé par email
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token: code,
+    type: "signup",
+  });
+
+  if (error) {
+    redirect(
+      `/inscription/verification?email=${encodeURIComponent(email)}&erreur=${encodeURIComponent(error.message)}`
+    );
+  }
+
+  redirect("/tableau-de-bord");
 }
 
 export async function connexion(formData: FormData) {
@@ -275,6 +299,7 @@ export async function ajouterOeuvre(formData: FormData) {
     slug,
     description: description || null,
     category: categorie,
+    video_url: videoUrl || null,
     primary_image_url: imageUrl,
     price_fcfa: 0,
     stock_quantity: 1,
@@ -372,6 +397,7 @@ export async function modifierOeuvre(id: string, formData: FormData) {
     title: titre,
     description: description || null,
     category: categorie,
+    video_url: videoUrl || null,
   };
 
   if (imageUrl) {

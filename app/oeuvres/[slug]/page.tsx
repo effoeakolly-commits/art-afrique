@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft, Truck, ShieldCheck, Heart } from "lucide-react";
-import type { Oeuvre } from "@/lib/types";
+import { ArrowLeft, ShieldCheck, ShoppingCart } from "lucide-react";
+import type { Commentaire, Oeuvre } from "@/lib/types";
+import BoutonLike from "@/components/BoutonLike";
+import SectionCommentaires from "@/components/SectionCommentaires";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +17,11 @@ export default async function PageDetailOeuvre(props: {
   const { slug } = await props.params;
   const supabase = await createClient();
 
+  // Récupérer l'utilisateur connecté
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { data } = await supabase
     .from("artworks")
     .select("*, artiste:artists(display_name, country, city, profile_image_url, bio)")
@@ -23,6 +30,34 @@ export default async function PageDetailOeuvre(props: {
     .single();
 
   if (!data) notFound();
+
+  // Vérifier si l'utilisateur a déjà liké cette œuvre
+  let estAime = false;
+  if (user) {
+    const { data: likeExistant } = await supabase
+      .from("artwork_likes")
+      .select("id")
+      .eq("artwork_id", data.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    estAime = !!likeExistant;
+  }
+
+  // Récupérer les commentaires de l'œuvre
+  const { data: commentairesData } = await supabase
+    .from("comments")
+    .select("*, auteur:profiles(first_name, last_name)")
+    .eq("artwork_id", data.id)
+    .order("created_at", { ascending: false });
+
+  const commentaires: Commentaire[] = (commentairesData || []).map((c: any) => ({
+    id: c.id,
+    artwork_id: c.artwork_id,
+    author_id: c.author_id,
+    content: c.content,
+    created_at: c.created_at,
+    auteur: c.auteur || undefined,
+  }));
 
   const oeuvre: Oeuvre = {
     ...data,
@@ -66,6 +101,20 @@ export default async function PageDetailOeuvre(props: {
                   </>
                 )}
               </div>
+            </div>
+
+            {/* Bouton like + prix */}
+            <div className="flex items-center justify-between">
+              <BoutonLike
+                oeuvreId={oeuvre.id}
+                estAime={estAime}
+                nombreLikes={oeuvre.likes_count}
+                estConnecte={!!user}
+              />
+
+              <span className="font-serif-title font-bold text-2xl text-[#241710]">
+                {formatPrice(oeuvre.price_fcfa)}
+              </span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white border border-[#E8DFCE] flex items-center justify-between">
@@ -121,14 +170,42 @@ export default async function PageDetailOeuvre(props: {
 
             <div className="flex gap-3 pt-2">
               <Link
+                href={`/commande`}
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-[#A67123] hover:bg-[#8F5F1B] text-white font-bold text-xs py-3 rounded-xl transition-all shadow-md"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>Ajouter au panier</span>
+              </Link>
+              <Link
                 href={`/artistes/${oeuvre.artist_id}`}
                 className="flex-1 bg-[#FAF7F0] border border-[#E8DFCE] hover:bg-[#F2EADA] text-[#241710] font-medium text-xs py-3 rounded-xl text-center transition-colors"
               >
                 Voir l'artiste
               </Link>
             </div>
+
+            {/* Vidéo si disponible */}
+            {oeuvre.video_url && (
+              <div className="pt-4">
+                <video
+                  src={oeuvre.video_url}
+                  controls
+                  className="w-full rounded-2xl shadow-lg"
+                  poster={oeuvre.primary_image_url}
+                >
+                  Votre navigateur ne supporte pas la vidéo.
+                </video>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Section commentaires */}
+        <SectionCommentaires
+          oeuvreId={oeuvre.id}
+          commentaires={commentaires}
+          estConnecte={!!user}
+        />
       </div>
     </div>
   );

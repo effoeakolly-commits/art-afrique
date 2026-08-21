@@ -22,23 +22,37 @@ export default async function ParametresPage(props: {
     return null;
   }
 
-  // Récupérer le profil
+  // Récupérer le profil (N'KORA : table "profiles")
   const { data: profil } = await supabase
-    .from("profils")
+    .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
 
-  // Récupérer les œuvres de l'artiste
-  const { data: oeuvres } = await supabase
-    .from("oeuvres")
-    .select(`*, coups_de_coeur(count)`)
-    .eq("artiste_id", user.id)
+  // Récupérer l'enregistrement artiste
+  const { data: artiste } = await supabase
+    .from("artists")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const artisteId = artiste?.id || "";
+
+  // Construire le nom complet depuis le profil (first_name + last_name)
+  const nomCompletProfil = profil
+    ? [profil.first_name, profil.last_name].filter(Boolean).join(" ") || null
+    : null;
+
+  // Récupérer les œuvres de l'artiste (N'KORA : table "artworks")
+  const { data: oeuvresData } = await supabase
+    .from("artworks")
+    .select(`*, artwork_likes(count)`)
+    .eq("artist_id", artisteId)
     .order("created_at", { ascending: false });
 
-  const oeuvresAvecLikes: Oeuvre[] = (oeuvres || []).map((o: any) => ({
+  const oeuvresAvecLikes: Oeuvre[] = (oeuvresData || []).map((o) => ({
     ...o,
-    coups_de_coeur_count: o.coups_de_coeur?.[0]?.count ?? 0,
+    likes_count: o.artwork_likes?.[0]?.count ?? 0,
   }));
 
   // Charger l'œuvre à éditer si demandé
@@ -46,10 +60,10 @@ export default async function ParametresPage(props: {
   let oeuvreEdit: Oeuvre | null = null;
   if (oeuvreId) {
     const { data } = await supabase
-      .from("oeuvres")
+      .from("artworks")
       .select("*")
       .eq("id", oeuvreId)
-      .eq("artiste_id", user.id)
+      .eq("artist_id", artisteId)
       .single();
     oeuvreEdit = data;
   }
@@ -58,7 +72,9 @@ export default async function ParametresPage(props: {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Paramètres du compte</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Paramètres du compte
+          </h1>
           <p className="mt-1 text-sm text-foreground/60">
             Gérez votre profil, vos œuvres et votre compte
           </p>
@@ -108,10 +124,10 @@ export default async function ParametresPage(props: {
         <section className="rounded-2xl border border-black/5 bg-white p-6">
           <h2 className="mb-4 text-xl font-semibold">Mon profil artiste</h2>
           <FormulaireProfil
-            nomComplet={profil?.nom_complet || "Artiste"}
-            bio={profil?.bio || null}
-            pays={profil?.pays || null}
-            photoUrl={profil?.photo_url || null}
+            nomComplet={artiste?.display_name || nomCompletProfil || "Artiste"}
+            bio={artiste?.bio || null}
+            pays={artiste?.country || profil?.country || null}
+            photoUrl={artiste?.profile_image_url || profil?.avatar_url || null}
             redirectTo="/tableau-de-bord/parametres"
           />
         </section>
@@ -158,7 +174,11 @@ export default async function ParametresPage(props: {
                         className="rounded-lg p-2 text-foreground/40 transition hover:bg-red-50 hover:text-red-600"
                         title="Supprimer l'œuvre"
                         onClick={(e) => {
-                          if (!confirm("Supprimer cette œuvre définitivement ?"))
+                          if (
+                            !confirm(
+                              "Supprimer cette œuvre définitivement ?"
+                            )
+                          )
                             e.preventDefault();
                         }}
                       >
@@ -207,7 +227,11 @@ export default async function ParametresPage(props: {
             type="submit"
             className="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
             onClick={(e) => {
-              if (!confirm("Êtes-vous sûr de vouloir supprimer votre compte définitivement ?"))
+              if (
+                !confirm(
+                  "Êtes-vous sûr de vouloir supprimer votre compte définitivement ?"
+                )
+              )
                 e.preventDefault();
             }}
           >
