@@ -2,9 +2,9 @@ name: Deploy to Vercel
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   deploy:
@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Vercel (Production)
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}

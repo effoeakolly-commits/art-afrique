@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'supabase/migrations/**'
-    branches: [master]
+    branches: [main]
 
 jobs:
   deploy-migrations:
